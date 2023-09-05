@@ -373,7 +373,7 @@ The SOP of the Fiction Studio Mode consists of two Nodes, each containing one ce
 
 **The typical JSON File of Fiction Studio Mode is shown as follows:**
 
-```json
+::
 {
   "temperature": 0.3,
   "active_mode": true,

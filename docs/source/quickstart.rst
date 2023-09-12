@@ -1,43 +1,59 @@
-Getting Started with Fun
+😄Getting Started with Fun
 =========================
 
-Try our demo in your terminal :point_down:
+Try our demo in your terminal 
 
-1. Open your terminal :computer:
+1. Open your terminal 🖥️
 
-2. Get the Repository :package:
+2. Get the Repository 📦
    ::
    
       git clone https://github.com/aiwaves-cn/agents.git
 
-3. Install the requirements :wrench:
+3. Install the requirements 🛠️
    ::
    
    pip install -r requirements.txt
 
-4. Set the config :wrench:
-   1. Modify sec/agents/config.py
-   2. Mainly modify API KEY and PROXY
+4. Set the config 🛠️
+   Modify example/{Muti|Single_Agent}/{target_agent}/config.json
       ::
 
-         # only used for shopping assistant
-         MIN_CATEGORY_SIM = 0.7  # Threshold for category matching
-         TOY_INFO_PATH = [your_path1, your_path2_...]  # Path to the product database
-         FETSIZE = 5  # Number of recommended products at a time
+         // only used for shopping assistant
+         {
+             MIN_CATEGORY_SIM  =  "0.7"  ##Threshold for category matching
+             TOY_INFO_PATH  = "[\"your_path1\",\"your_path2_\"......]" #Path to the product database
+             FETSIZE  =  "5" #Number of recommended products at a time
+    
+             #for all agents
+             API_KEY  =  #Your API KEY
+             PROXY  =  #Your proxy
+             MAX_CHAT_HISTORY  =  "8" #Longest History
+             User_Names = "[\"{user_name}\"]" # the name of agents which you want to play  
+                             }
 
-         # for all agents
-         API_KEY =  # Your API KEY
-         PROXY =  # Your proxy
-         MAX_CHAT_HISTORY = 8  # Longest History
+ Notice that if you want to use WebSearchComponent, you also need set the config!
+::
 
-Deploy our demo on the backend :point_down:
+ "WebSearchComponent": {
+                        "engine_name": "bing",
+                        "api": {
+                            "google": {
+                                "cse_id": "Your cse_id",
+                                "api_key": "Your api_key"
+                            },
+                            "bing": "Your bing key"
+                        }
+                    }
 
-1. Prepare your front-end webpage :globe_with_meridians:
+Deploy our demo on the backend 
 
-2. Deploy :rocket:
+1. Prepare your front-end webpage 🌐
+
+2. Deploy 🚀
    ::
    
-   Please refer to serving.py for details. We used flask to deploy :hot_pepper:
+   Please refer to serving.py for details. We used flask to deploy 
 
    cd examples
    python serving.py --agent shopping_assistant.json --port your_port --router your_api_router

@@ -258,7 +258,7 @@ The SOP of the Oculist Agent consists of four states, each finishing their parts
 
 The typical JSON File of the Oculist Agent is shown as follows:
 
-```json
+.. code-block:: json
 { 
   "config":{
     "API_KEY" : "API_KEY",

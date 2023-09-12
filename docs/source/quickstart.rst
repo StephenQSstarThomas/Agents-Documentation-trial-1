@@ -7,16 +7,19 @@ Try our demo in your terminal:
 1. Open your terminal 🖥️
 
 2. 🪜Get the Repository 📦
-
+   ::
+   
    git clone https://github.com/aiwaves-cn/agents.git
 
 3. Install the requirements🛠️
-
+   ::
+   
    pip install -r requirements.txt
 
 4. Set the config🛠️
 
    Modify example/{Muti|Single_Agent}/{target_agent}/config.json
+.. code:: json
 
    // only used for shopping assistant
    {
@@ -32,6 +35,8 @@ Try our demo in your terminal:
    }
 
    Notice that if you want to use WebSearchComponent, you also need set the config!
+
+.. code:: bash
 
    "WebSearchComponent": {
                            "engine_name": "bing",
@@ -52,6 +57,8 @@ Deploy our demo on the backend:
 
     Please refer to run.py for details
     We used fast_api to deploy🌶️
+
+.. code:: bash
 
     cd examples
     python run_backend.py --agent Single_Agent/shopping_assistant/muti_shop.json --config Single_Agent/shopping_assistant/config.yaml  --port your_port --router your_api_router

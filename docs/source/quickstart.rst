@@ -16,194 +16,191 @@ Try our demo in your terminal
    pip install -r requirements.txt
 
 4. Set the config 🛠️
+.. code-block:: json
+
    Modify example/{Muti|Single_Agent}/{target_agent}/config.json
-      ::
+   // only used for shopping assistant
+   {
+       MIN_CATEGORY_SIM  =  "0.7"  ##Threshold for category matching
+       TOY_INFO_PATH  = "[\"your_path1\",\"your_path2_\"......]" #Path to the product database
+       FETSIZE  =  "5" #Number of recommended products at a time
 
-         // only used for shopping assistant
-         {
-             MIN_CATEGORY_SIM  =  "0.7"  ##Threshold for category matching
-             TOY_INFO_PATH  = "[\"your_path1\",\"your_path2_\"......]" #Path to the product database
-             FETSIZE  =  "5" #Number of recommended products at a time
-    
-             #for all agents
-             API_KEY  =  #Your API KEY
-             PROXY  =  #Your proxy
-             MAX_CHAT_HISTORY  =  "8" #Longest History
-             User_Names = "[\"{user_name}\"]" # the name of agents which you want to play  
-                             }
+       #for all agents
+       API_KEY  =  #Your API KEY
+       PROXY  =  #Your proxy
+       MAX_CHAT_HISTORY  =  "8" #Longest History
+       User_Names = "[\"{user_name}\"]" # the name of agents which you want to play  
+   }
 
- Notice that if you want to use WebSearchComponent, you also need set the config!
-::
+   Notice that if you want to use WebSearchComponent, you also need set the config!
+   "WebSearchComponent": {
+       "engine_name": "bing",
+       "api": {
+           "google": {
+               "cse_id": "Your cse_id",
+               "api_key": "Your api_key"
+           },
+           "bing": "Your bing key"
+       }
+   }
 
- "WebSearchComponent": {
-                        "engine_name": "bing",
-                        "api": {
-                            "google": {
-                                "cse_id": "Your cse_id",
-                                "api_key": "Your api_key"
-                            },
-                            "bing": "Your bing key"
-                        }
-                    }
+Deploy our demo on the backend:point_down:
 
-Deploy our demo on the backend 
+1. Prepare your front-end webpage🌐
+2. Deploy🚀
+   Please refer to run.py for details
+   We used fast_api to deploy🌶️
 
-1. Prepare your front-end webpage 🌐
-
-2. Deploy 🚀
-   ::
-   
-   Please refer to serving.py for details. We used flask to deploy 
+.. code-block:: bash
 
    cd examples
-   python serving.py --agent shopping_assistant.json --port your_port --router your_api_router
+   python run_backend.py --agent Single_Agent/shopping_assistant/muti_shop.json --config Single_Agent/shopping_assistant/config.yaml  --port your_port --router your_api_router
 
 Get started with our Agents!
-============================
 
-How to write a modulized JSON file?
------------------------------------
+🧠 How to write a modulized JSON file?
 
 Preview
-~~~~~~~
-
+~~~~~
 In this passage, we will show you how to write a modulized JSON file, which is of vital significance in generating the Agents.
 
 Part 0: Template
 ~~~~~~~~~~~~~~~~
-
 The following codes are a typical template for wrting JSON Files.(Please refer to template.py)
 
-.. code:: python
+.. code-block:: json
 
-## default { "temperature": 0.3, "model": "gpt-3.5-turbo-16k-0613","log_path": "logs/{your name}"}
-LLM = {
-    "temperature": 0.0,
-    "model": "gpt-3.5-turbo-16k-0613",
-    "log_path": "logs/god"
-}
+   ## default { "temperature": 0.3, "model": "gpt-3.5-turbo-16k-0613","log_path": "logs/{your name}"}
+   LLM = {
+       "temperature": 0.0,
+       "model": "gpt-3.5-turbo-16k-0613",
+       "log_path": "logs/god"
+   }
 
-Agents = {
-    "Lilong" : {
-        "style" : "professional",
-        "roles" : {
-            "company" : "coder",
-            "state2" : "role2",
-        },
-    "name2" : {   
-        "style" : "professional",
-            "roles" : {
-                "company" : "coder",
-                "state2" : "role2",
-            },
-        }
-    }
-}
+   Agents = {
+       "Lilong" : {
+           "style" : "professional",
+           "roles" : {
+               "company" : "coder",
+               "state2" : "role2",
+           },
+       "name2" : {   
+           "style" : "professional",
+               "roles" : {
+                   "company" : "coder",
+                   "state2" : "role2",
+               },
+           }
+       }
+   }
 
-# indispensable parameter:  "controller_type"（"order","random","rule"）
-controller = {
-    "controller_type": "order",
-    "max_chat_nums" : 12,
-    "judge_system_prompt": "",
-    "judge_last_prompt": "",
-    "judge_extract_words": "end",
-    "call_system_prompt" : "",
-    "call_last_prompt": "",
-    "call_extract_words": ""
-}
+   # indispensable parameter:  "controller_type"（"order","random","rule"）
+   controller = {
+       "controller_type": "order",
+       "max_chat_nums" : 12,
+       "judge_system_prompt": "",
+       "judge_last_prompt": "",
+       "judge_extract_words": "end",
+       "call_system_prompt" : "",
+       "call_last_prompt": "",
+       "call_extract_words": ""
+   }
 
-Agent_state = {
-    "role": {
-    "LLM_type": "OpenAI",
-    "LLM": LLM,
-    "style": {
-        "role": "Opening Advocate for the Affirmative",
-        "style": "professional"
-    },
-    "task": {
-        "task": ""
-    },
-    "rule": {
-        "rule": ""
-    }
-},
-}
+   Agent_state = {
+       "role": {
+       "LLM_type": "OpenAI",
+       "LLM": LLM,
+       "style": {
+           "role": "Opening Advocate for the Affirmative",
+           "style": "professional"
+       },
+       "task": {
+           "task": ""
+       },
+       "rule": {
+           "rule": ""
+       }
+   },
+   }
 
-# indispensable parameter:  "name" and "agent_states"
-State = {
-    "controller": controller,
-    "begin_role": "",
-    "begin_query": "",
-    "environment_prompt": "",
-    "name": "state1",
-    "roles": ["role1","role2"],
-    "LLM_type": "OpenAI",
-    "LLM": LLM,
-    "agent_state" : Agent_state,
-    
-    
-    
-}
+   # indispensable parameter:  "name" and "agent_states"
+   State = {
+       "controller": controller,
+       "begin_role": "",
+       "begin_query": "",
+       "environment_prompt": "",
+       "name": "state1",
+       "roles": ["role1","role2"],
+       "LLM_type": "OpenAI",
+       "LLM": LLM,
+       "agent_state" : Agent_state,
+   }
 
-States = {
-    "end_state":{
-            "name":"end_state",
-            "agent_states":{}
-        },
-    "state1" : State
-    
-}
+   States = {
+       "end_state":{
+               "name":"end_state",
+               "agent_states":{}
+           },
+       "state1" : State
+   }
 
-# default finish_state_name is "end_state"
-SOP = {
-    "config" : {
-    "API_KEY" : "Your key",
-    "PROXY" : "Your PROXY",
-    "MAX_CHAT_HISTORY" : "5",
-    "User_Names" : "[\"alexander\"]"
-    },
-    "environment_type" : "competive",
-    "LLM_type": "OpenAI",
-    "LLM" :LLM,
-    "root": "state1",
-    "finish_state_name" : "end_state",
-    "relations": {
-        "state1": {
-            "0": "state1",
-            "1": "state2"
-        },
-        "state2":{
-            "0":"state2",
-            "1":"end_state"
-        }
-    },
-    "agents": Agents,
-    "states": States,
-}
+   # default finish_state_name is "end_state"
+   SOP = {
+       "config" : {
+       "API_KEY" : "Your key",
+       "PROXY" : "Your PROXY",
+       "MAX_CHAT_HISTORY" : "5",
+       "User_Names" : "[\"alexander\"]"
+       },
+       "environment_type" : "competive",
+       "LLM_type": "OpenAI",
+       "LLM" :LLM,
+       "root": "state1",
+       "finish_state_name" : "end_state",
+       "relations": {
+           "state1": {
+               "0": "state1",
+               "1": "state2"
+           },
+           "state2":{
+               "0":"state2",
+               "1":"end_state"
+           }
+       },
+       "agents": Agents,
+       "states": States,
+   }
+~~~~~
 
 
    (written by JSON master longli)
 
-Part 1: Remark on some of the attributes:
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Part 1: Remark on some of the attributes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- ``agent_states``: Fundamental attributes of a certain Agent in one certain node. Note that in Multi-Agents mode, there are several different agents in one particular node, so this attribute helps classify and claim each Agent's tasks and contents.
-  - ``Bot_Tag``: The ONLY signal of one particular Agent in a certain Node.
-  - ``judge_system_prompt`` & ``judge_last_prompt``: Decide which Node should be activated.
-  - ``style`` & ``task`` & ``rules`` & ``demonstration`` & ``CoT`` & ``Output``: Please refer to PromptComponent part, which is aforementioned.
-  - ``KnowledgeBaseComponent``: Please refer to ToolComponent part, which is also mentioned above.
 
-- ``node_json``: Aforementioned--Please refer to Controller part for detailed definitions and explanations.
-  - ``call_system_prompt`` & ``call_last_prompt``: Allocate tasks for each Node. Extraordinarily useful under circumstances where multiple agents are applied.
-  - ``judge_extract_words`` and ``call_extract_words``: Extract particular contents from certain words.
+- SOP consists of State and Agent.
 
-- ``sop_json``: Fundamental attributes of the SOP graph.
-  - ``temperature``: The diversity of the answers. Range from 0 to 1.
-  - ``active_mode``: Decide whether the node should actively ask questions.
-  - ``log_path``: Paths of logs. Especially useful while compiling or modifying.
-  - ``environment_prompt``: Basic prompt of one certain node. Please refer to PromptComponent part for detailed information.
-  - ``relation``: Relations between nodes. On the left is the certain output from one particular node, and on the right is the connected node which matches the output.
-  - ``nodes``: Total set of nodes and their types.
+- State: The basic unit of SOP can be considered as a task or a scene, that is, a place where all Agents need to work together. It stores the tasks that agents with different identities need to complete.
+  (Note: The task is given to the agent with a specific identity rather than the agent with a specific name)
+
+  States: Stores all states.
+  - name: The ONLY signal of one particular State in a certain SOP.
+  - Controller: Determine whether the current state ends based on its system prompt and last prompt, which State should be entered next, and which Agent the task should be assigned to.
+  - begin_role & begin_query: The Agent who should speak and the corresponding words when entering the scene for the first time.
+  - environment_prompt: Responsible for explaining the overall situation of the current State; it will be added before the system prompt of all Agents in the current scene.
+  - roles: All roles in the current state.
+
+- Agent_state: Component of different agents in this state.
+  - style & task & rules & demonstration & CoT & Output: Please refer to PromptComponent part, which is aforementioned.
+  - KnowledgeBaseComponent: Please refer to ToolComponent part, which is also mentioned above.
+
+- SOP: Fundamental attributes of the SOP graph.
+  - active_mode: Decide whether the state should actively ask questions.
+  - root: The beginning State.
+  - relation: Relations between states. On the left is the certain output from one particular state, and on the right is the connected state which matches the output.
+  - environment_type: Agent in different states do not share memory when competing, but share memory when coordinate is used.
+
 
 Part 2: Examples
 ~~~~~~~~~~~~~~~~
@@ -224,23 +221,24 @@ The oculist agent acts as a consultant, providing professional advice and enabli
 How to run our Raw Model
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you want to simply talk to our given Oculist agent, please run these codes:
+- If you want to simply talk to our given Oculist agent, please run these codes:
 
-.. code::
+  .. code-block:: bash
 
-   cd examples
-   python run.py --agent Single_Agent/Oculist_Agent/config.json 
+     cd examples
+     python run.py --agent Single_Agent/Oculist_Agent/config.json
 
-If you want to run it in the gradient interface:
+- If you want to run it in the gradient interface:
 
-..code::
+  .. code-block:: bash
 
-   cd examples
-   python run_gradio.py --agent Single_Agent/Oculist_Agent/config.json
+     cd examples
+     python run_gradio.py --agent Single_Agent/Oculist_Agent/config.json
 
-You can easily change agent by changing  (--agent and --config)
+- You can easily change the agent by changing the (--agent and --config) parameters.
 
-If you want to generate other customized agents, please follow our instructions above.
+- 🧠 If you want to generate other customized agents, please follow our instructions above.
+
 
 SOP Demonstration:
 ~~~~~~~~~~~~~~~~~~
@@ -250,16 +248,17 @@ The SOP of our Oculist Agent is shown below:
 [Image]
 
 Explanations:
-  The SOP of the Oculist Agent consists of four Nodes, each finishing their parts of the whole workflow.
-  - knowledge_base node: provide expertised suggestions for patients, offering guidance to the hospital.
-  - book_card node: send the information card for patients to fill in and offer reservation in advance.
-  - welcome_end node: respond to other questions such as 'How can I get to the hospital?', 'When should I come?', etc.
-  - response_end node: send particular messages, ending the whole conversation.
+
+The SOP of the Oculist Agent consists of four states, each finishing their parts of the whole workflow.
+
+- knowledge_base state: Provide expertised suggestions for patients, offering guidance to the hospital.
+- book_card state: Send the information card for patients to fill in and offer reservation in advance.
+- welcome_end state: Respond to other questions such as 'How can I get to the hospital?', 'When should I come?', etc.
+- response_end state: Send particular messages, ending the whole conversation.
 
 The typical JSON File of the Oculist Agent is shown as follows:
 
-.. code:: json
-
+```json
 { 
   "config":{
     "API_KEY" : "API_KEY",
@@ -434,21 +433,23 @@ The typical JSON File of the Oculist Agent is shown as follows:
   }
 }
 
+
 If you want to learn more about our JSON File or review the JSON file-generating process, please refer to our instructions.
 
-Yang Bufan—Chatting Bot: :speech_balloon: [click here to start!]
---------------------------------------------------------------
+Other than the Oculist Agent, we also provide various types of Agents, which can be seen in our AgentHub part:
+💬Yang Bufan—Chatting Bot: 
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-Youcai Agent—Policy Consultant: :clipboard: [click here to start!]
-------------------------------------------------------------
+📋Youcai Agent—Policy Consultant:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Zhaoshang Agent—Commercial Assistant: :office: [click here to start!]
------------------------------------------------------------
+🏢Zhaoshang Agent—Commercial Assistant:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Multi-Agent Mode: 
+🤖🤖Multi-Agent Mode: 
 -------------------------------
 
-Fiction Studio--Step-by-step fiction generating:
+📚Fiction Studio--Step-by-step fiction generating:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Model Description

@@ -1,190 +1,132 @@
+Getting Started with Fun
 =========================
-😄Getting Started with Fun
-=========================
 
-Try our demo in your terminal:
+Try our demo in your terminal :point_down:
 
-1. Open your terminal 🖥️
+1. Open your terminal :computer:
 
-2. 🪜Get the Repository 📦
+2. Get the Repository :package:
    ::
    
-   git clone https://github.com/aiwaves-cn/agents.git
+      git clone https://github.com/aiwaves-cn/agents.git
 
-3. Install the requirements🛠️
+3. Install the requirements :wrench:
    ::
    
    pip install -r requirements.txt
 
-4. Set the config🛠️
+4. Set the config :wrench:
+   1. Modify sec/agents/config.py
+   2. Mainly modify API KEY and PROXY
+      ::
 
-   Modify example/{Muti|Single_Agent}/{target_agent}/config.json
-.. code:: json
+         # only used for shopping assistant
+         MIN_CATEGORY_SIM = 0.7  # Threshold for category matching
+         TOY_INFO_PATH = [your_path1, your_path2_...]  # Path to the product database
+         FETSIZE = 5  # Number of recommended products at a time
 
-   // only used for shopping assistant
-   {
-       MIN_CATEGORY_SIM  =  "0.7"  ##Threshold for category matching
-       TOY_INFO_PATH  = "[\"your_path1\",\"your_path2_\"......]" #Path to the product database
-       FETSIZE  =  "5" #Number of recommended products at a time
+         # for all agents
+         API_KEY =  # Your API KEY
+         PROXY =  # Your proxy
+         MAX_CHAT_HISTORY = 8  # Longest History
 
-       #for all agents
-       API_KEY  =  #Your API KEY
-       PROXY  =  #Your proxy
-       MAX_CHAT_HISTORY  =  "8" #Longest History
-       User_Names = "[\"{user_name}\"]" # the name of agents which you want to play  
-   }
+Deploy our demo on the backend :point_down:
 
-   Notice that if you want to use WebSearchComponent, you also need set the config!
+1. Prepare your front-end webpage :globe_with_meridians:
 
-.. code:: bash
+2. Deploy :rocket:
+   ::
+   
+   Please refer to serving.py for details. We used flask to deploy :hot_pepper:
 
-   "WebSearchComponent": {
-                           "engine_name": "bing",
-                           "api": {
-                               "google": {
-                                   "cse_id": "Your cse_id",
-                                   "api_key": "Your api_key"
-                               },
-                               "bing": "Your bing key"
-                           }
-                       }
-
-Deploy our demo on the backend:
-
-1. Prepare your front-end webpage🌐
-
-2. Deploy🚀
-
-    Please refer to run.py for details
-    We used fast_api to deploy🌶️
-
-.. code:: bash
-
-    cd examples
-    python run_backend.py --agent Single_Agent/shopping_assistant/muti_shop.json --config Single_Agent/shopping_assistant/config.yaml  --port your_port --router your_api_router
+   cd examples
+   python serving.py --agent shopping_assistant.json --port your_port --router your_api_router
 
 Get started with our Agents!
----------------------------
+============================
 
-🧠 How to write a modulized JSON file?
-=======================================
+How to write a modulized JSON file?
+-----------------------------------
 
-**Preview**
+Preview
+~~~~~~~
 
 In this passage, we will show you how to write a modulized JSON file, which is of vital significance in generating the Agents.
 
-**Part 0: Template**
+Part 0: Template
+~~~~~~~~~~~~~~~~
 
-The following codes are a typical template for writing JSON Files. (Please refer to template.py)
+The following codes are a typical template for writing JSON Files.
 
-```rst
-## default { "temperature": 0.3, "model": "gpt-3.5-turbo-16k-0613","log_path": "logs/{your name}"}
-LLM = {
-    "temperature": 0.0,
-    "model": "gpt-3.5-turbo-16k-0613",
-    "log_path": "logs/god"
-}
+.. code:: json
 
-Agents = {
-    "Lilong" : {
-        "style" : "professional",
-        "roles" : {
-            "company" : "coder",
-            "state2" : "role2",
-        },
-    "name2" : {   
-        "style" : "professional",
-            "roles" : {
-                "company" : "coder",
-                "state2" : "role2",
-            },
-        }
-    }
-}
+   agent_states = {
+       "Bot_Tag": {
+           "style": {
+               "name": str,
+               "role": str,
+               "style": str
+           },
+           "task": {
+               "task": str
+           },
+           "rule": {
+               "rule": str
+           },
+           "demonstration": {
+               "demonstrations": ["example1", "example2", ...]
+           },
+           "output": {
+               "output": str
+           },
+           "cot": {
+               "demonstrations": ["example1", "example2", ...]
+           },
+           "config": [
+               "style",
+               "task",
+               "rule",
+               "KnowledgeBaseComponent"
+           ]
+       },
+   }
 
-# indispensable parameter:  "controller_type"（"order","random","rule"）
-controller = {
-    "controller_type": "order",
-    "max_chat_nums" : 12,
-    "judge_system_prompt": "",
-    "judge_last_prompt": "",
-    "judge_extract_words": "end",
-    "call_system_prompt" : "",
-    "call_last_prompt": "",
-    "call_extract_words": ""
-}
+.. code:: json
 
-Agent_state = {
-    "role": {
-    "LLM_type": "OpenAI",
-    "LLM": LLM,
-    "style": {
-        "role": "Opening Advocate for the Affirmative",
-        "style": "professional"
-    },
-    "task": {
-        "task": ""
-    },
-    "rule": {
-        "rule": ""
-    }
-},
-}
+   node_json = {
+       "name": str,
+       "is_iteractive": bool,
+       "agent_states": agent_states,
+       "controller": {
+           "judge_system_prompt": str,
+           "judge_last_prompt": str,
+           "judge_extract_words": str,
+           "call_system_prompt": str,
+           "call_last_prompt": str,
+           "call_extract_words": str,
+       }
+   }
 
-# indispensable parameter:  "name" and "agent_states"
-State = {
-    "controller": controller,
-    "begin_role": "",
-    "begin_query": "",
-    "environment_prompt": "",
-    "name": "state1",
-    "roles": ["role1","role2"],
-    "LLM_type": "OpenAI",
-    "LLM": LLM,
-    "agent_state" : Agent_state,
-    
-    
-    
-}
+.. code:: json
 
-States = {
-    "end_state":{
-            "name":"end_state",
-            "agent_states":{}
-        },
-    "state1" : State
-    
-}
+   sop_json = {
+       "temperature": float,
+       "active_mode": bool,
+       "log_path": str,
+       "environment_prompt": str,
+       "relation": {
+           "node_knowledge_response": {
+               "1": "node_knowledge_response_book_card",
+               "0": "node_knowledge_response"
+           },
+       },
+       "nodes": {
+           "nodes_name": node_json,
+           "nodes_name2": node_json,
+       }
+   }
 
-# default finish_state_name is "end_state"
-SOP = {
-    "config" : {
-    "API_KEY" : "Your key",
-    "PROXY" : "Your PROXY",
-    "MAX_CHAT_HISTORY" : "5",
-    "User_Names" : "[\"alexander\"]"
-    },
-    "environment_type" : "competive",
-    "LLM_type": "OpenAI",
-    "LLM" :LLM,
-    "root": "state1",
-    "finish_state_name" : "end_state",
-    "relations": {
-        "state1": {
-            "0": "state1",
-            "1": "state2"
-        },
-        "state2":{
-            "0":"state2",
-            "1":"end_state"
-        }
-    },
-    "agents": Agents,
-    "states": States,
-}
-
-(written by JSON master longli)
-
+   (written by JSON master longli)
 
 Part 1: Remark on some of the attributes:
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -212,10 +154,10 @@ Part 2: Examples
 
 Please refer to our Agents Demonstrations for more information. You can use them as reference.
 
-🤖Single-Agent Mode: 
+Single-Agent Mode: :robot:
 ----------------------------
 
-👁️ Oculist Agent—Medical Use:
+Oculist Agent—Medical Use:
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Model Description
@@ -233,14 +175,14 @@ If you want to simply talk to our given Oculist agent, please run these codes:
    cd examples/eye
    python serving.py
 
-🧠If you want to generate other customized agents, please follow our instructions above.
+If you want to generate other customized agents, please follow our instructions above.
 
 SOP Demonstration:
 ~~~~~~~~~~~~~~~~~~
 
 The SOP of our Oculist Agent is shown below:
 
-[图片]
+[Image]
 
 Explanations:
   The SOP of the Oculist Agent consists of four Nodes, each finishing their parts of the whole workflow.
@@ -402,19 +344,19 @@ The typical JSON File of the Oculist Agent is shown as follows:
 
 If you want to learn more about our JSON File or review the JSON file-generating process, please refer to our instructions.
 
-💬Yang Bufan—Chatting Bot:  [click here to start!]
+Yang Bufan—Chatting Bot: :speech_balloon: [click here to start!]
 --------------------------------------------------------------
 
-📋Youcai Agent—Policy Consultant:[click here to start!]
+Youcai Agent—Policy Consultant: :clipboard: [click here to start!]
 ------------------------------------------------------------
 
-🏢Zhaoshang Agent—Commercial Assistant: [click here to start!]
+Zhaoshang Agent—Commercial Assistant: :office: [click here to start!]
 -----------------------------------------------------------
 
-🤖🤖Multi-Agent Mode:
+Multi-Agent Mode: :robot::robot:
 -------------------------------
 
-📚Fiction Studio--Step-by-step fiction generating:
+Fiction Studio--Step-by-step fiction generating:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Model Description
@@ -432,7 +374,7 @@ If you want to simply run our Fiction Studio Mode, please run these codes:
    cd examples
    python run_cmd.py --agent fiction.json
 
-🧠If you want to generate other customized agents, please follow our instructions above.
+If you want to generate other customized agents, please follow our instructions above.
 
 SOP Demonstration:
 ~~~~~~~~~~~~~~~~~~

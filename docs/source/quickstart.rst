@@ -72,75 +72,115 @@ In this passage, we will show you how to write a modulized JSON file, which is o
 Part 0: Template
 ~~~~~~~~~~~~~~~~
 
-The following codes are a typical template for writing JSON Files.
+The following codes are a typical template for wrting JSON Files.(Please refer to template.py)
 
-.. code:: json
+.. code:: python
 
-   agent_states = {
-       "Bot_Tag": {
-           "style": {
-               "name": str,
-               "role": str,
-               "style": str
-           },
-           "task": {
-               "task": str
-           },
-           "rule": {
-               "rule": str
-           },
-           "demonstration": {
-               "demonstrations": ["example1", "example2", ...]
-           },
-           "output": {
-               "output": str
-           },
-           "cot": {
-               "demonstrations": ["example1", "example2", ...]
-           },
-           "config": [
-               "style",
-               "task",
-               "rule",
-               "KnowledgeBaseComponent"
-           ]
-       },
-   }
+## default { "temperature": 0.3, "model": "gpt-3.5-turbo-16k-0613","log_path": "logs/{your name}"}
+LLM = {
+    "temperature": 0.0,
+    "model": "gpt-3.5-turbo-16k-0613",
+    "log_path": "logs/god"
+}
 
-.. code:: json
+Agents = {
+    "Lilong" : {
+        "style" : "professional",
+        "roles" : {
+            "company" : "coder",
+            "state2" : "role2",
+        },
+    "name2" : {   
+        "style" : "professional",
+            "roles" : {
+                "company" : "coder",
+                "state2" : "role2",
+            },
+        }
+    }
+}
 
-   node_json = {
-       "name": str,
-       "is_iteractive": bool,
-       "agent_states": agent_states,
-       "controller": {
-           "judge_system_prompt": str,
-           "judge_last_prompt": str,
-           "judge_extract_words": str,
-           "call_system_prompt": str,
-           "call_last_prompt": str,
-           "call_extract_words": str,
-       }
-   }
+# indispensable parameter:  "controller_type"（"order","random","rule"）
+controller = {
+    "controller_type": "order",
+    "max_chat_nums" : 12,
+    "judge_system_prompt": "",
+    "judge_last_prompt": "",
+    "judge_extract_words": "end",
+    "call_system_prompt" : "",
+    "call_last_prompt": "",
+    "call_extract_words": ""
+}
 
-.. code:: json
+Agent_state = {
+    "role": {
+    "LLM_type": "OpenAI",
+    "LLM": LLM,
+    "style": {
+        "role": "Opening Advocate for the Affirmative",
+        "style": "professional"
+    },
+    "task": {
+        "task": ""
+    },
+    "rule": {
+        "rule": ""
+    }
+},
+}
 
-   sop_json = {
-       "temperature": float,
-       "active_mode": bool,
-       "log_path": str,
-       "environment_prompt": str,
-       "relation": {
-           "node_knowledge_response": {
-               "1": "node_knowledge_response_book_card",
-               "0": "node_knowledge_response"
-           },
-       },
-       "nodes": {
-           "nodes_name": node_json,
-           "nodes_name2": node_json,
-       }
-   }
+# indispensable parameter:  "name" and "agent_states"
+State = {
+    "controller": controller,
+    "begin_role": "",
+    "begin_query": "",
+    "environment_prompt": "",
+    "name": "state1",
+    "roles": ["role1","role2"],
+    "LLM_type": "OpenAI",
+    "LLM": LLM,
+    "agent_state" : Agent_state,
+    
+    
+    
+}
+
+States = {
+    "end_state":{
+            "name":"end_state",
+            "agent_states":{}
+        },
+    "state1" : State
+    
+}
+
+# default finish_state_name is "end_state"
+SOP = {
+    "config" : {
+    "API_KEY" : "Your key",
+    "PROXY" : "Your PROXY",
+    "MAX_CHAT_HISTORY" : "5",
+    "User_Names" : "[\"alexander\"]"
+    },
+    "environment_type" : "competive",
+    "LLM_type": "OpenAI",
+    "LLM" :LLM,
+    "root": "state1",
+    "finish_state_name" : "end_state",
+    "relations": {
+        "state1": {
+            "0": "state1",
+            "1": "state2"
+        },
+        "state2":{
+            "0":"state2",
+            "1":"end_state"
+        }
+    },
+    "agents": Agents,
+    "states": States,
+}
+
 
    (written by JSON master longli)
 
@@ -170,7 +210,7 @@ Part 2: Examples
 
 Please refer to our Agents Demonstrations for more information. You can use them as reference.
 
-Single-Agent Mode: :robot:
+Single-Agent Mode: 
 ----------------------------
 
 Oculist Agent—Medical Use:
@@ -188,8 +228,17 @@ If you want to simply talk to our given Oculist agent, please run these codes:
 
 .. code::
 
-   cd examples/eye
-   python serving.py
+   cd examples
+   python run.py --agent Single_Agent/Oculist_Agent/config.json 
+
+If you want to run it in the gradient interface:
+
+..code::
+
+   cd examples
+   python run_gradio.py --agent Single_Agent/Oculist_Agent/config.json
+
+You can easily change agent by changing  (--agent and --config)
 
 If you want to generate other customized agents, please follow our instructions above.
 
@@ -211,152 +260,179 @@ The typical JSON File of the Oculist Agent is shown as follows:
 
 .. code:: json
 
-   {
-    "nodes": {
-    "node_knowledge_response": {
-      "name": "node_knowledge_response",
-      "is_interactive": "true",
-      "extract_word": "回复",
-      "agent_states": {
-        "眼科客服": {
-          "style": {
-            "name": "吴家隆",
-            "role": "眼科医院的客服",
-            "style": "幽默风趣"
-          },
-          "task": {
-            "task": "引导用户去医院做检查并回答我的医院相关问题"
-          },
-          "rule": {
-            "rule": "你的语言要尽量精简，不要废话太多。你要反复引导我。用户明确拒绝到院时，追问用户有什么担忧，引导用户到院咨询，如：“您这边是有什么顾虑吗？”、“我们医院有非常专业的医生，您可以到线下和医生具体聊一聊哦”。用户有疑虑时，用户回复“我想想”、“我考虑一下”、“我还要再看看”等，介绍医院的优势，引导用户到院咨询。记住，你要在回复我之后引导我去你们医院做检查。"
-          },
-          "KnowledgeBaseComponent": {
-            "top_k": 1,
-            "type": "QA",
-            "knowledge_base": "/home/aiwaves/jlwu/multi-agent/agents/examples/eye/eye_database.json"
-          },
-          "config": [
-            "style",
-            "task",
-            "rule",
-            "KnowledgeBaseComponent"
-          ]
-        }
-      },
-      "root": true,
-      "controller": {
-        "judge_system_prompt": "你现在需要做的是判断用户是否同意到医院。根据用户的回答，结合之前的对话，判断用户是否同意到院。\n如果用户同意到医院，你需要返回<结束>1</结束>，如果没有，你需要返回<结束>0</结束>。\n你需要格外关注上下文中Assitant和user分别说了什么。当用户回答好的，嗯嗯，没有问题了之类的回答时，返回<结束>1</结束>",
-        "judge_last_prompt": "请联系上文，进行<结束>和</结束>的提取，不要进行额外的输出，请严格按照上述格式输出！记住，请严格按照上述格式输出！",
-        "judge_extract_words": "结束"
+{ 
+  "config":{
+    "API_KEY" : "API_KEY",
+    "PROXY" : "PROXY",
+    "MAX_CHAT_HISTORY" : "5",
+    "MIN_CATEGORY_SIM" : "0.7",
+    "FETSIZE" : "3",
+    "User_Names" : "[\"Agod\"]",
+    "Embed_Model" : "intfloat/multilingual-e5-large"
+  },
+  "LLM_type": "OpenAI",
+  "LLM": {
+    "temperature": 0.3,
+    "model": "gpt-3.5-turbo-16k-0613",
+    "log_path": "logs/god"
+  },
+  "root": "knowledge_response",
+  "relations": {
+    "knowledge_response": {
+      "1": "knowledge_response_book_card",
+      "0": "knowledge_response"
+    },
+    "knowledge_response_book_card": {
+      "1": "end",
+      "0": "knowledge_response_book_card"
+    },
+    "end": {
+      "0": "knowledge_response_end"
+    },
+    "knowledge_response_end": {
+      "0": "knowledge_response_end"
+    }
+  },
+  "agents": {
+    "Wu Jialong": {
+      "style":"humorous",
+      "roles":{
+      "knowledge_response": "Oculist",
+      "knowledge_response_book_card": "Oculist",
+      "knowledge_response_end": "Oculist",
+      "end": "Oculist"
       }
     },
-    "node_knowledge_response_book_card": {
-      "name": "node_knowledge_response_book_card",
-      "is_interactive": "true",
-      "extract_word": "回复",
+    "Agod": {
+      "style":"Cold and cunning",
+      "roles":{
+      "knowledge_response": "Customer",
+      "knowledge_response_book_card": "Customer",
+      "knowledge_response_end": "Customer",
+      "end": "Customer"
+      }
+    }
+  },
+  "states": {
+    "knowledge_response": {
+      "name": "knowledge_response",
+      "roles": [
+        "Oculist",
+        "Customer"
+      ],
+      "begin_role":"Oculist",
+      "begin_query" :"Welcome to consult, do you have any questions?",
       "agent_states": {
-        "眼科客服": {
+        "Oculist": {
           "style": {
-            "name": "吴家隆",
-            "role": "眼科医院的客服",
-            "style": "幽默风趣"
+            "role": "Eye hospital customer service"
           },
           "task": {
-            "task": "引导用户填写预约卡并回答医院的相关问题"
+            "task": "Guide the user to go to the hospital for an examination and answer questions related to my hospital."
           },
           "rule": {
-            "rule": "你的语言要尽量精简，不要废话太多。邀请卡的文案是：请复制并填写以下资料，再发给我即可完成预约。\n【姓名】:\n【电话】:\n【您所在的大概位置】:x市x区 \n【预计到院时间】:\n【最近一次戴隐形眼镜时期】:\n【近视度数】：\n 术前检查流程有散瞳环节，散瞳后会有4-6个小时回视线模糊，影响驾驶安全，所以请不要自驾来医院，并安排好检查之后的个人行程。你需要反复邀请用户来填写邀请卡。用户闲聊时，委婉回复引导用户填写预约卡，如：“关于您的问题，我无法提供详细信息。如果您需要到院咨询眼科问题，我可以帮您预约哦。”用户有疑虑时，如：用户回复“我想想”、“我考虑一下”、“我还要再看看”等，介绍医院的优势，引导用户填写预约卡。用户没有填写完整时，如用户没有填写手机号，则提醒用户补充手机号"
+            "rule": "Your language should be concise and avoid excessive words. You need to guide me repeatedly. When the user explicitly refuses to visit the hospital, inquire about their concerns and encourage them to come for consultation, such as: \"Do you have any concerns?\" or \"Our hospital has highly professional doctors who you can discuss with in person.\" When the user expresses doubts with responses like \"I'll think about it,\" \"I'll consider it,\" or \"I need to see more,\" introduce the advantages of the hospital and guide them to come for consultation. Remember, after responding to me, guide me to visit your hospital for an examination."
           },
           "KnowledgeBaseComponent": {
             "top_k": 1,
             "type": "QA",
-            "knowledge_base": "/home/aiwaves/jlwu/multi-agent/agents/examples/eye/eye_database.json"
-          },
-          "config": [
-            "style",
-            "task",
-            "rule",
-            "KnowledgeBaseComponent"
-          ]
+            "knowledge_path": "Single_Agent/Oculist_Agent/database.json"
+          }
+        },
+        "Customer":{
         }
       },
-      "root": false,
       "controller": {
-        "judge_system_prompt": "根据用户的回答，分析其与之前对话的关系，判断其是否填写了预约卡。\n 如果用户填写了预约卡中的电话信息，输出<结束>1</结束>\n如果用户没有填写完整或者格式有问题等输出<结束>0</结束>\n 你需要格外关注上下文,Assitant和user分别说了什么。当用户回答【电话】:15563665210，返回<结束>1</结束>。当用户回答【电话】: 15，返回<结束>0</结束>，因为没有填写完整。当用户回答【电话】:abs，返回<结束>0</结束>，因为没有填写完整",
-        "judge_last_prompt": "请联系上文，进行<结束>和</结束>的提取，不要进行额外的输出，请严格按照上述格式输出！记住，请严格按照上述格式输出！",
-        "judge_extract_words": "结束"
+        "controller_type":"order",
+        "judge_system_prompt": "What you need to do now is determine whether the user agrees to go to the hospital. Based on the user's answer and combined with previous conversations, it is determined whether the user agrees to go to the hospital. \nIf the user agrees to go to the hospital, you need to return <end>1</end>, if not, you need to return <end>0</end>. \nYou need to pay special attention to what the Assistant and user said in the context. When the user answers OK, uh-huh, no more questions, etc., return <end>1</end>",
+        "judge_last_prompt": "Please contact the above to extract <end> and </end>. Do not perform additional output. Please strictly follow the above format for output! Remember, please strictly follow the above format for output!",
+        "judge_extract_words": "end"
       }
     },
-    "node_knowledge_response_end": {
-      "name": "node_knowledge_response_end",
-      "is_interactive": "true",
-      "extract_word": "回复",
+    "knowledge_response_book_card": {
+      "name": "knowledge_response_book_card",
+      "roles": [
+        "Oculist",
+        "Customer"
+      ],
       "agent_states": {
-        "眼科客服": {
+        "Oculist": {
           "style": {
-            "name": "吴家隆",
-            "role": "眼科医院的客服",
-            "style": "幽默风趣"
+            "role": "Eye hospital customer service"
           },
           "task": {
-            "task": "回答用户的相关问题。"
+            "task": "Guide users to fill out appointment cards and answer hospital-related questions"
           },
           "rule": {
-            "rule": "你的语言要尽量精简，不要废话太多"
+            "rule": "Your language should be as concise as possible, without too much nonsense. The copy of the invitation card is: Please copy and fill in the following information and send it to me to complete the reservation. \n[Name]:\n[Telephone]:\n[Your approximate location]: District Degree]: \n The preoperative examination process includes mydriasis. After mydriasis, your vision will be blurred for 4-6 hours, which affects driving safety, so please do not drive to the hospital by yourself, and arrange your personal itinerary after the examination. You need to repeatedly invite users to fill out invitation cards. When users are chatting, euphemistic replies guide users to fill in the appointment card, such as: \"I can't provide detailed information about your question. If you need to go to the hospital for eye consultation, I can make an appointment for you.\" When users have concerns, such as: Users reply with \"I want to think about it,\" \"I'll think about it,\" \"I want to see it again,\" etc., introducing the hospital's advantages and guiding users to fill in the appointment card. If the user does not fill in the phone number completely, the user will be reminded to add the phone number."
           },
           "KnowledgeBaseComponent": {
             "top_k": 1,
             "type": "QA",
-            "knowledge_base": "/home/aiwaves/jlwu/multi-agent/agents/examples/eye/eye_database.json"
-          },
-          "config": [
-            "style",
-            "task",
-            "rule",
-            "KnowledgeBaseComponent"
-          ]
+            "knowledge_path": "Single_Agent/Oculist_Agent/database.json"
+          }
+        },
+        "Customer":{
         }
       },
-      "root": false
+      "controller": {
+        "controller_type":"order",
+        "judge_system_prompt": "Based on the user's answer, analyze its relationship with the previous conversation and determine whether the user has filled out the appointment card. \n If the user fills in the phone information in the appointment card, output <end>1</end>\nIf the user does not fill in completely or the format is wrong, output <end>0</end>\n You need to pay special attention to the context ,Assitant and user said what respectively. When the user answers [Telephone]: 15563665210, <end>1</end> is returned. When the user answers [Telephone]: 15, <end>0</end> is returned because it is not filled in completely. When the user answers [Telephone]: abs, <end>0</end> is returned because it is not filled in completely.",
+        "judge_last_prompt": "Please contact the above to extract <end> and </end>. Do not perform additional output. Please strictly follow the above format for output! Remember, please strictly follow the above format for output!",
+        "judge_extract_words": "end"
+      }
     },
-    "node_end": {
-      "name": "node_end",
-      "is_interactive": "true",
+    "knowledge_response_end": {
+      "controller": {
+        "controller_type":"order"
+      },
+      "name": "knowledge_response_end",
+      "roles": [
+        "Oculist",
+        "Customer"
+      ],
       "agent_states": {
-        "眼科客服": {
+        "Oculist": {
+          "style": {
+            "role": "Eye hospital customer service"
+          },
+          "task": {
+            "task": "Answer relevant questions from users."
+          },
+          "rule": {
+            "rule": "Your language should be as concise as possible and don’t talk too much."
+          },
+          "KnowledgeBaseComponent": {
+            "top_k": 1,
+            "type": "QA",
+            "knowledge_path": "Single_Agent/Oculist_Agent/database.json"
+          }
+        },
+        "Customer":{
+        }
+      }
+    },
+    "end": {
+      "name": "end",
+      "roles": [
+        "Oculist",
+        "Customer"
+      ],
+      "agent_states": {
+        "controller": {
+          "controller_type":"order"
+        },
+        "Oculist": {
           "StaticComponent": {
             "output": "我会帮您预约好名额，请您合理安排好时间。届时我会在二楼眼科分诊台等您。"
           }
+        },
+        "Customer":{
         }
-      },
-      "root": false,
-      "config": [
-        "StaticComponent"
-      ]
+      }
     }
-  },
-  "relation": {
-    "node_knowledge_response": {
-      "1": "node_knowledge_response_book_card",
-      "0": "node_knowledge_response"
-    },
-    "node_knowledge_response_book_card": {
-      "1": "node_end",
-      "0": "node_knowledge_response_book_card"
-    },
-    "node_end": {
-      "0": "node_knowledge_response_end"
-    },
-    "node_knowledge_response_end": {
-      "0": "node_knowledge_response_end"
-    }
-  },
-  "environment_prompt": "在网络上，一个医院的网络客服正在回答用户的问题，主要角色为：眼科客服（吴家隆）负责回答用户的问题，user（A神）来咨询眼科相关问题",
-  "temperature": 0.6,
-  "log_path": "logs",
-  "active_mode": false,
-  "answer_simplify": true
-   }
+  }
+}
 
 If you want to learn more about our JSON File or review the JSON file-generating process, please refer to our instructions.
 
@@ -369,7 +445,7 @@ Youcai Agent—Policy Consultant: :clipboard: [click here to start!]
 Zhaoshang Agent—Commercial Assistant: :office: [click here to start!]
 -----------------------------------------------------------
 
-Multi-Agent Mode: :robot::robot:
+Multi-Agent Mode: 
 -------------------------------
 
 Fiction Studio--Step-by-step fiction generating:

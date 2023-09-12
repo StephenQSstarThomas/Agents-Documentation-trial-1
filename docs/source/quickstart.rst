@@ -2,7 +2,7 @@
 😄Getting Started with Fun
 =========================
 
-Try our demo in your terminal:point_down:
+Try our demo in your terminal:
 
 1. Open your terminal 🖥️
 
@@ -44,7 +44,7 @@ Try our demo in your terminal:point_down:
                            }
                        }
 
-Deploy our demo on the backend:point_down:
+Deploy our demo on the backend:
 
 1. Prepare your front-end webpage🌐
 
@@ -205,7 +205,7 @@ Part 2: Examples
 
 Please refer to our Agents Demonstrations for more information. You can use them as reference.
 
-🤖Single-Agent Mode: :robot:
+🤖Single-Agent Mode: 
 ----------------------------
 
 👁️ Oculist Agent—Medical Use:
@@ -395,16 +395,16 @@ The typical JSON File of the Oculist Agent is shown as follows:
 
 If you want to learn more about our JSON File or review the JSON file-generating process, please refer to our instructions.
 
-💬Yang Bufan—Chatting Bot: :speech_balloon: [click here to start!]
+💬Yang Bufan—Chatting Bot:  [click here to start!]
 --------------------------------------------------------------
 
-📋Youcai Agent—Policy Consultant: :clipboard: [click here to start!]
+📋Youcai Agent—Policy Consultant:[click here to start!]
 ------------------------------------------------------------
 
-🏢Zhaoshang Agent—Commercial Assistant: :office: [click here to start!]
+🏢Zhaoshang Agent—Commercial Assistant: [click here to start!]
 -----------------------------------------------------------
 
-🤖🤖Multi-Agent Mode: :robot::robot:
+🤖🤖Multi-Agent Mode:
 -------------------------------
 
 📚Fiction Studio--Step-by-step fiction generating:

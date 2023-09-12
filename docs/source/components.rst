@@ -1,9 +1,17 @@
-Components
+💡Components
 ==========
 
-To facilitate modularized prompts for Nodes in an AI Autonomous Agent, we've introduced the Components module. Basic codes of the Component class are as follows:
+Introduction
+------------
 
-.. code-block:: python
+To facilitate modularized prompts for States in an AI Autonomous Agent, we've introduced the Components module.
+
+Component Class
+---------------
+
+Basic codes of the Component class are as follows:
+
+.. code:: python
 
    class Component:
        def __init__(self):
@@ -16,7 +24,7 @@ Prompt Component: Versatility Redefined
 
 Under the PromptComponent class, we've crafted nine distinctive subclasses, each playing an important role in shaping interactions. Basic codes of the PromptComponent class are shown as follows:
 
-.. code-block:: python
+.. code:: python
 
    class PromptComponent:
        def __init__(self):
@@ -26,18 +34,14 @@ Under the PromptComponent class, we've crafted nine distinctive subclasses, each
        def get_prompt(self, agent_dict):
            pass
 
-Apparently, the PromptComponent class serves as a container of all kinds of prompt-components. Different types are created for various sorts of prompts.
+1. Demonstration Component
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-1. Demonstration Component:
-   Showcases several examples under diverse circumstances, enabling agents to mimic its own style. Basic nodes of the Demonstration Component class are shown as follows:
+Showcases several examples under diverse circumstances, enabling agents to mimic its own style. Basic states of the Demonstration Component class are shown as follows:
 
-.. code-block:: python
+.. code:: python
 
    class DemonstrationComponent(PromptComponent):
-       """
-       input a list, the example of the answer.
-       """
-
        def __init__(self, demonstrations):
            super().__init__()
            self.demonstrations = demonstrations
@@ -52,16 +56,14 @@ Apparently, the PromptComponent class serves as a container of all kinds of prom
            prompt += "</demonstrations>\n"
            return prompt
 
-2. CoT Component:
-   Encompasses algebraic procedures, tailor-made for mathematical problems. Basic nodes of the CoT Component class are shown as follows:
+2. CoT Component
+~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+Encompasses algebraic procedures, tailor-made for mathematical problems. Basic states of the CoT Component class are shown as follows:
+
+.. code:: python
 
    class CoTComponent(PromptComponent):
-       """
-       input a list, the example of the answer.
-       """
-
        def __init__(self, demonstrations):
            super().__init__()
            self.demonstrations = demonstrations
@@ -78,10 +80,12 @@ Apparently, the PromptComponent class serves as a container of all kinds of prom
 
 Seemingly, the codes of the two classes above are absolutely the same. However, the CoT Component class is relatively more complicated. The examples given should contain reasoning steps, including algebraic procedure and logical thinking. By analyzing the examples, your agent will be able to respond with its own thinking steps.
 
-3. Output Component:
-   Extracts responses in particular signs, thus enabling Nodes to start its functions. Basic nodes of the Output Component class are shown as follows:
+3. Output Component
+~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+Extracts responses in particular signs, thus enabling states to start its functions. Basic states of the Output Component class are shown as follows:
+
+.. code:: python
 
    class OutputComponent(PromptComponent):
        def __init__(self, output):
@@ -92,10 +96,12 @@ Seemingly, the codes of the two classes above are absolutely the same. However, 
            return f"""Please contact the above to extract <{self.output}> and </{self.output}>, \
                do not perform additional output, please output in strict accordance with the above format!\n"""
 
-4. Rule Component:
-   Hosts a spectrum of node-specific settings, intimately tied to contextual tasks. Basic nodes of the Rule Component class are shown as follows:
+4. Rule Component
+~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+Hosts a spectrum of state-specific settings, intimately tied to contextual tasks. Basic states of the Rule Component class are shown as follows:
+
+.. code:: python
 
    class RuleComponent(PromptComponent):
        def __init__(self, rule):
@@ -105,10 +111,12 @@ Seemingly, the codes of the two classes above are absolutely the same. However, 
        def get_prompt(self, agent_dict):
            return f"""The rule you need to follow is:\n<rule>{self.rule}</rule>.\n"""
 
-5. Task Component:
-   Illuminates a node's purpose, defining its role within the agent's architecture. Basic nodes of the Task Component class are shown as follows:
+5. Task Component
+~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+Illuminates a state's purpose, defining its role within the agent's architecture. Basic states of the Task Component class are shown as follows:
+
+.. code:: python
 
    class TaskComponent(PromptComponent):
        def __init__(self, task):
@@ -118,10 +126,12 @@ Seemingly, the codes of the two classes above are absolutely the same. However, 
        def get_prompt(self, agent_dict):
            return f"""The task you need to execute is: <task>{self.task}</task>.\n"""
 
-6. Style Component:
-   Illuminates a node's purpose, defining its role within the agent's architecture. Basic nodes of the Style Component class are shown as follows:
+6. Style Component
+~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+Illuminates a state's purpose, defining its role within the agent's architecture. Basic states of the Style Component class are shown as follows:
+
+.. code:: python
 
    class StyleComponent(PromptComponent):
        def __init__(self, role):
@@ -134,10 +144,12 @@ Seemingly, the codes of the two classes above are absolutely the same. However, 
            return f"""Now your role is:\n<role>{self.role}</role>, your name is:\n<name>{name}</name>. \
                You need to follow the output style:\n<style>{style}</style>.\n"""
 
-7. Last Component:
-   Serves as another system prompt which lies at the end of the prompts. Extraordinarily significant requirements or background information is recommended to highlight in this component type. Basic nodes of the Last Component class are shown as follows:
+7. Last Component
+~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+Serves as another system prompt which lies at the end of the prompts. Extraordinarily significant requirements or background information is recommended to highlight in this component type. Basic states of the Last Component class are shown as follows:
+
+.. code:: python
 
    class LastComponent(PromptComponent):
        def __init__(self, last_prompt):
@@ -147,10 +159,12 @@ Seemingly, the codes of the two classes above are absolutely the same. However, 
        def get_prompt(self, agent_dict):
            return self.last_prompt
 
-8. Input Component:
-   Provide background information for a particular LLM agent. Extraordinarily useful while applied for chatting bots of different statuses. Basic nodes of the Input Component class are shown as follows:
+8. Input Component
+~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+Provide background information for a particular LLM agent. Extraordinarily useful while applied for chatting bots of different status. Basic states of the Input Component class are shown as follows:
+
+.. code:: python
 
    class InputComponent(PromptComponent):
        def __init__(self):
@@ -160,13 +174,15 @@ Seemingly, the codes of the two classes above are absolutely the same. However, 
            information = agent_dict["information"]
            return f"The information you need to know:\n<information>{information}</information>\n"
 
-9. Customize Component:
-   Generate a customized template for a certain agent. Basic nodes of the Customize Component class are shown as follows:
+9. Customize Component
+~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+Generate customized template for a certain agent. Basic states of the Customize Component class are shown as follows:
+
+.. code:: python
 
    class CustomizeComponent(PromptComponent):
-       def __init__(self, template, keywords) -> None:
+       def __init__(self, template, keywords):
            super().__init__()
            self.template = template
            self.keywords = keywords
@@ -184,10 +200,12 @@ Tool Component: Empowering Functionality
 
 The ToolComponent family provides specialized functions crucial for the agent's performance:
 
-1. Extract Component:
-   Surgically extracts vital keywords from user input, strategically storing them for reference. Basic codes of the Extract Component class are as follows:
+1. Extract Component
+~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+Surgically extracts vital keywords from user input, strategically storing them for reference. Basic codes of the Extract Component class are as follows:
+
+.. code:: python
 
    class ExtractComponent(ToolComponent):
        def __init__(
@@ -199,27 +217,35 @@ The ToolComponent family provides specialized functions crucial for the agent's 
            super().__init__()
            self.extract_words = extract_words
            self.system_prompt = system_prompt
-           self.last_prompt = last_prompt if last_prompt else f"Please strictly adhere to the following format for outputting: <{self.extract_words}>{{the content you need to extract}}</{self.extract_words}>"
+           self.default_prompt = (
+               "Please strictly adhere to the following format for outputting:\n"
+           )
+           for extract_word in extract_words:
+               self.default_prompt += (
+                   f"<{extract_word}> the content you need to extract </{extract_word}>"
+               )
+           self.last_prompt = last_prompt if last_prompt else self.default_prompt
 
-       def func(self, agent_dict):
-           response = agent_dict["LLM"].get_response(
-               agent_dict["long_term_memory"],
+       def func(self, agent):
+           response = agent.LLM.get_response(
+               agent.long_term_memory,
                self.system_prompt,
                self.last_prompt,
-               agent_dict=agent_dict,
                stream=False,
            )
            for extract_word in self.extract_words:
                key = extract(response, extract_word)
                key = key if key else response
-               agent_dict[extract_word] = key
+               agent.environment.shared_memory[extract_word] = key
 
            return {}
 
-2. KnowledgeBase Component:
-   Masterfully rephrases user queries, leveraging top answers from the knowledge base using advanced similarity matching, ensuring accurate responses. Basic codes of the Knowledge Component class are as follows:
+2. Knowledge Base Component
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+If you want to inject knowledge into your agent, you can first use utils.process_document to convert your csv file into json format, and then inject the json file into the agent through this component. Basic codes of the Knowledge Base Component class are as follows:
+
+.. code:: python
 
    class KnowledgeBaseComponent(ToolComponent):
        def __init__(self, top_k, type, knowledge_base):
@@ -292,23 +318,16 @@ The ToolComponent family provides specialized functions crucial for the agent's 
                    print(knowledge)
                    return {"prompt": "The relevant content is: " + knowledge + "\n"}
 
-3. WebSearch Component:
-   Establish connections to several Web search engines and acquire information based on the WEB. One of the core components in Tool components part, the highlight of the whole project. Basic codes of the WebSearch Component class are as follows:
+3. Web Search Component
+~~~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+Establish connections to several Web search engines, and acquire information based on the WEB. One of the core components in Tool components part, the highlight of the whole project. Basic codes of the Web Search Component class are as follows:
+
+.. code:: python
 
    class WebSearchComponent(ToolComponent):
-       """search engines"""
-
-       __ENGINE_NAME__: List = ["google", "bing"]
-
        def __init__(self, engine_name: str, api: Dict):
-           """
-           :param engine_name: The name of the search engine used
-           :param api: Pass in a dictionary, such as {"bing": "key1", "google": "key2", ...}, of course, each value can also be a list, or more complicated
-           """
            super(WebSearchComponent, self).__init__()
-           """Determine whether the key and engine_name of the api are legal"""
 
            assert engine_name in WebSearchComponent.__ENGINE_NAME__
            for api_name in api:
@@ -320,7 +339,6 @@ The ToolComponent family provides specialized functions crucial for the agent's 
            self.search: Dict = {"bing": self._bing_search, "google": self._google_search}
 
        def _bing_search(self, query: str, **kwargs):
-           """Initialize search hyperparameters"""
            subscription_key = self.api["bing"]
            search_url = "https://api.bing.microsoft.com/v7.0/search"
            headers = {"Ocp-Apim-Subscription-Key": subscription_key}
@@ -330,11 +348,9 @@ The ToolComponent family provides specialized functions crucial for the agent's 
                "textFormat": "HTML",
                "count": 10,
            }
-           """start searching"""
            response = requests.get(search_url, headers=headers, params=params)
            response.raise_for_status()
            results = response.json()["webPages"]["value"]
-           """execute"""
            metadata_results = []
            for result in results:
                metadata_result = {
@@ -346,15 +362,14 @@ The ToolComponent family provides specialized functions crucial for the agent's 
            return {"meta data": metadata_results}
 
        def _google_search(self, query: str, **kwargs):
-           """Initialize search hyperparameters"""
            api_key = self.api[self.engine_name]["api_key"]
            cse_id = self.api[self.engine_name]["cse_id"]
            service = build("customsearch", "v1", developerKey=api_key)
-           """start searching"""
            results = (
-               service.cse().list(q=query, cx=cse_id, num=10, **kwargs).execute()["items"]
+               service.cse()
+               .list(q=query, cx=cse_id, num=10, **kwargs)
+               .execute()["items"]
            )
-           """execute"""
            metadata_results = []
            for result in results:
                metadata_result = {
@@ -384,14 +399,14 @@ The ToolComponent family provides specialized functions crucial for the agent's 
            assert engine_name in WebSearchComponent.__ENGINE_NAME__
            self.engine_name = engine_name
 
-4. WebCrawl Component:
-   Open a single webpage and crawl contents on a certain URL. Basic codes of the WebCrawl Component class are as follows:
+4. Web Crawl Component
+~~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+Open a single webpage, and crawl contents on a certain URL. Basic codes of the Web Crawl Component class are as follows:
+
+.. code:: python
 
    class WebCrawlComponent(ToolComponent):
-       """Open a single web page for crawling"""
-
        def __init__(self):
            super(WebCrawlComponent, self).__init__()
 
@@ -399,36 +414,27 @@ The ToolComponent family provides specialized functions crucial for the agent's 
            url = agent_dict["url"]
            print(f"crawling {url} ......")
            content = ""
-           """Crawling content from URL may need to be carried out according to different websites, such as wiki, Baidu, Zhihu, etc."""
            driver = webdriver.Chrome()
            try:
-               """Open URL"""
                driver.get(url)
-
-               """Wait 20 seconds"""
                wait = WebDriverWait(driver, 20)
                wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
-
-               """Crawl code"""
                page_source = driver.page_source
-
-               """Parse"""
                soup = BeautifulSoup(page_source, "html.parser")
-
-               """Concatenate"""
                for paragraph in soup.find_all("p"):
                    content = f"{content}\n{paragraph.get_text()}"
            except Exception as e:
                print("Error:", e)
            finally:
-               """Quit"""
                driver.quit()
            return {"content": content.strip()}
 
-5. API Component:
-   Start and utilize certain kinds of APIs. Basic codes of the API Component class are as follows:
+5. API Component
+~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+Start and utilize certain kinds of APIs. Basic codes of the API Component class are as follows:
+
+.. code:: python
 
    class APIComponent(ToolComponent):
        def __init__(self):
@@ -437,10 +443,12 @@ The ToolComponent family provides specialized functions crucial for the agent's 
        def func(self, agent_dict: Dict) -> Dict:
            pass
 
-6. Static Component:
-   Create a special type of component for states. Static components only operate under given requirements and don't have to generate its own intelligence based on LLM. Basic codes of the Static Component class are as follows:
+6. Static Component
+~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+Create a special type of component for states. Static components only operate under given requirements and don't have to generate its own intelligence based on LLM. Basic codes of the Static Component class are as follows:
+
+.. code:: python
 
    class StaticComponent(ToolComponent):
        def __init__(self, output):
@@ -451,10 +459,12 @@ The ToolComponent family provides specialized functions crucial for the agent's 
            outputdict = {"response": self.output}
            return outputdict
 
-7. Function Component:
-   Utilize the 'function call' method and store particular args of the particular Agent. Basic codes of the Function Component class are as follows:
+7. Function Component
+~~~~~~~~~~~~~~~~~~~~
 
-.. code-block:: python
+Utilize the 'function call' method, and store particular args of the particular Agent. Basic codes of the Function Component class are as follows:
+
+.. code:: python
 
    class FunctionComponent(ToolComponent):
        def __init__(
@@ -518,5 +528,6 @@ The ToolComponent family provides specialized functions crucial for the agent's 
                    outputdict["prompt"] = function_response
 
            return outputdict
+
 
 (The above material is from prompt master jlwu & prompt noob stephen_qs)
